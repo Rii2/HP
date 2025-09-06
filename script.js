@@ -1,145 +1,74 @@
-// DOM要素の取得
+// 和風・可愛い忍者道場ゲーム
 document.addEventListener('DOMContentLoaded', function() {
-    const ninjaCards = document.querySelectorAll('.ninja-card');
-    const floatingNinjas = document.querySelectorAll('.floating-ninja');
-    const titleChars = document.querySelectorAll('.title-char');
-
     // ニンジャカードのクリックイベント
+    const ninjaCards = document.querySelectorAll('.ninja-card');
     ninjaCards.forEach(card => {
         card.addEventListener('click', function() {
             const ninjaName = this.dataset.ninja;
             showNinjaModal(ninjaName);
-            createParticleEffect(this);
-        });
-
-        // ホバーエフェクト強化
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-15px) scale(1.08) rotateY(5deg)';
-            createSparkles(this);
-        });
-
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1) rotateY(0deg)';
+            createSakuraEffect(this);
         });
     });
 
-    // パーティクルエフェクト
-    function createParticleEffect(element) {
+    // 桜エフェクト
+    function createSakuraEffect(element) {
         const rect = element.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        for (let i = 0; i < 15; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.cssText = `
+        for (let i = 0; i < 12; i++) {
+            const sakura = document.createElement('div');
+            sakura.innerHTML = '🌸';
+            sakura.style.cssText = `
                 position: fixed;
                 left: ${centerX}px;
                 top: ${centerY}px;
-                width: 6px;
-                height: 6px;
-                background: ${getRandomColor()};
-                border-radius: 50%;
+                font-size: ${12 + Math.random() * 8}px;
                 pointer-events: none;
                 z-index: 1000;
-                animation: particle-burst 1s ease-out forwards;
+                animation: sakura-burst 2s ease-out forwards;
             `;
 
-            const angle = (i / 15) * 2 * Math.PI;
-            const velocity = 100 + Math.random() * 100;
+            const angle = (i / 12) * 2 * Math.PI;
+            const velocity = 80 + Math.random() * 80;
             const vx = Math.cos(angle) * velocity;
             const vy = Math.sin(angle) * velocity;
 
-            particle.style.setProperty('--vx', vx + 'px');
-            particle.style.setProperty('--vy', vy + 'px');
+            sakura.style.setProperty('--vx', vx + 'px');
+            sakura.style.setProperty('--vy', vy + 'px');
 
-            document.body.appendChild(particle);
+            document.body.appendChild(sakura);
 
-            setTimeout(() => {
-                particle.remove();
-            }, 1000);
+            setTimeout(() => sakura.remove(), 2000);
         }
     }
 
-    // スパークルエフェクト
-    function createSparkles(element) {
-        const rect = element.getBoundingClientRect();
-        
-        for (let i = 0; i < 8; i++) {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.innerHTML = '✨';
-            sparkle.style.cssText = `
-                position: fixed;
-                left: ${rect.left + Math.random() * rect.width}px;
-                top: ${rect.top + Math.random() * rect.height}px;
-                font-size: ${12 + Math.random() * 8}px;
-                pointer-events: none;
-                z-index: 999;
-                animation: sparkle-fade 1.5s ease-out forwards;
-            `;
-
-            document.body.appendChild(sparkle);
-
-            setTimeout(() => {
-                sparkle.remove();
-            }, 1500);
-        }
-    }
-
-    // ニンジャモーダル表示
+    // モーダル表示
     function showNinjaModal(ninjaName) {
-        // 既存のモーダルを削除
         const existingModal = document.querySelector('.ninja-modal');
-        if (existingModal) {
-            existingModal.remove();
-        }
+        if (existingModal) existingModal.remove();
 
         const modal = document.createElement('div');
         modal.className = 'ninja-modal';
         modal.innerHTML = `
             <div class="modal-content">
                 <div class="modal-close">&times;</div>
-                <h2>${ninjaName}の詳細</h2>
-                <div class="ninja-stats">
-                    <div class="stat">
-                        <span class="stat-label">レベル:</span>
-                        <span class="stat-value">${Math.floor(Math.random() * 50) + 50}</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">スキル:</span>
-                        <span class="stat-value">${getRandomSkill()}</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">属性:</span>
-                        <span class="stat-value">${getRandomElement()}</span>
-                    </div>
-                </div>
-                <div class="ninja-description-full">
-                    ${getNinjaDescription(ninjaName)}
+                <h2>🌸 ${ninjaName}の秘密 🌸</h2>
+                <div class="ninja-details">
+                    <p>${getNinjaDescription(ninjaName)}</p>
                 </div>
             </div>
         `;
 
         modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            animation: modal-fade-in 0.3s ease-out;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center;
+            align-items: center; z-index: 2000; animation: modal-fade-in 0.3s ease-out;
         `;
 
         document.body.appendChild(modal);
 
-        // モーダルを閉じる
-        const closeBtn = modal.querySelector('.modal-close');
-        closeBtn.addEventListener('click', () => {
+        modal.querySelector('.modal-close').addEventListener('click', () => {
             modal.style.animation = 'modal-fade-out 0.3s ease-out';
             setTimeout(() => modal.remove(), 300);
         });
@@ -152,230 +81,465 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ランダムカラー生成
-    function getRandomColor() {
-        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    }
-
-    // ランダムスキル生成
-    function getRandomSkill() {
-        const skills = ['忍術', '体術', '幻術', '封印術', '医療忍術', '感知術', '結界術', '召喚術'];
-        return skills[Math.floor(Math.random() * skills.length)];
-    }
-
-    // ランダム属性生成
-    function getRandomElement() {
-        const elements = ['火', '水', '風', '土', '雷', '光', '闇', '氷'];
-        return elements[Math.floor(Math.random() * elements.length)];
-    }
-
-    // ニンジャ説明文
     function getNinjaDescription(name) {
         const descriptions = {
-            'サクヤ': '時空を操る神秘的な忍者。過去と未来を自在に行き来し、戦場では予知能力を駆使して敵を翻弄する。',
-            'ジャノメ': '蝶のように美しく舞い踊る忍者。華麗な動きで敵を惑わし、毒の粉で相手を眠りに誘う。',
-            'ジン': '風の精霊と契約を結んだ忍者。嵐を呼び起こし、竜巻で敵を巻き込む強力な術を使う。',
-            'シオン': '紫の炎を操る神秘的な忍者。美しい紫の炎は見る者を魅了し、強力な破壊力を持つ。',
-            'シャオラン': '雷を自在に操る電撃忍者。稲妻の速さで移動し、雷撃で敵を麻痺させる。',
-            'ネム': '夢の世界を支配する忍者。敵を深い眠りに誘い、悪夢で精神を攻撃する恐ろしい術を使う。',
-            'ハヤテ': '疾風のように素早い忍者。その速さは目にも止まらず、風の刃で敵を切り裂く。',
-            'ユイ': '絆と結びの力を操る忍者。仲間との絆を力に変え、強力な結界術で味方を守る。',
-            'レイ': '霊と交信できる神秘的な忍者。死者の魂を呼び起こし、霊の力を借りて戦う。',
-            'ロトン': '炎の炉を操る鍛冶忍者。灼熱の炎で武器を鍛え、炎の術で敵を焼き尽くす。'
+            'サクヤ': '桜の花びらと共に時を操る美しい忍者。春の訪れと共に現れ、時の流れを自在に操ります。🌸',
+            'ジャノメ': '蝶のように優雅に舞い踊る忍者。美しい羽根で敵を惑わし、花の蜜のような甘い術を使います。🦋',
+            'ジン': '風と共に駆け抜ける忍者。そよ風のように優しく、嵐のように激しい二面性を持ちます。💨',
+            'シオン': '紫の炎を操る神秘的な忍者。美しい紫の炎は見る者を魅了し、心を癒やす力があります。💜',
+            'シャオラン': '雷鳴と共に現れる電撃忍者。稲妻の速さで移動し、雷の力で仲間を守ります。⚡',
+            'ネム': '夢の世界の案内人。優しい眠りを誘い、美しい夢を見せてくれる癒やし系忍者です。😴',
+            'ハヤテ': '疾風のように素早い忍者。風の刃で敵を倒し、仲間のピンチに駆けつけます。🌪️',
+            'ユイ': '絆の力を操る忍者。仲間との結びつきを大切にし、愛の力で強力な結界を張ります。🎀',
+            'レイ': '霊と心を通わせる神秘的な忍者。優しい霊たちと共に戦い、迷子の魂を導きます。👻',
+            'ロトン': '温かな炎を操る忍者。心を温める優しい炎で、みんなを笑顔にしてくれます。🔥'
         };
-        return descriptions[name] || 'クリプトニンジャの世界で活躍する謎多き忍者。';
+        return descriptions[name] || 'クリプトニンジャの世界で活躍する可愛い忍者です。';
     }
 
-    // タイトル文字のランダムアニメーション
-    function randomTitleAnimation() {
-        titleChars.forEach((char, index) => {
-            setTimeout(() => {
-                char.style.animation = 'none';
-                char.offsetHeight; // リフロー強制
-                char.style.animation = `bounce 0.6s ease-out, rainbow 3s ease-in-out infinite`;
-            }, index * 100);
-        });
-    }
-
-    // 定期的にタイトルアニメーション実行
-    setInterval(randomTitleAnimation, 8000);
-
-    // フローティング要素のクリックイベント
-    floatingNinjas.forEach(ninja => {
-        ninja.style.cursor = 'pointer';
-        ninja.addEventListener('click', function() {
-            this.style.animation = 'none';
-            this.offsetHeight; // リフロー強制
-            this.style.animation = 'spin 1s ease-out, float-around 10s linear infinite';
-            createParticleEffect(this);
-        });
-    });
-
-    // スクロールエフェクト
-    window.addEventListener('scroll', function() {
-        const scrolled = window.pageYOffset;
-        const parallax = scrolled * 0.5;
-        
-        document.querySelector('.stars').style.transform = `translateY(${parallax}px)`;
-        document.querySelector('.twinkling').style.transform = `translateY(${parallax * 0.8}px)`;
-    });
-
-    // マウス追従エフェクト
-    document.addEventListener('mousemove', function(e) {
-        const cursor = document.querySelector('.custom-cursor');
-        if (!cursor) {
-            const newCursor = document.createElement('div');
-            newCursor.className = 'custom-cursor';
-            newCursor.innerHTML = '🌟';
-            newCursor.style.cssText = `
-                position: fixed;
-                pointer-events: none;
-                z-index: 9999;
-                font-size: 20px;
-                transition: all 0.1s ease;
-            `;
-            document.body.appendChild(newCursor);
+    // ゲーム初期化
+    setTimeout(() => {
+        if (document.getElementById('gameCanvas')) {
+            game = new Game();
         }
-        
-        const cursorElement = document.querySelector('.custom-cursor');
-        cursorElement.style.left = e.clientX - 10 + 'px';
-        cursorElement.style.top = e.clientY - 10 + 'px';
-    });
+    }, 100);
 });
 
-// CSS アニメーション追加
-const additionalStyles = `
-@keyframes particle-burst {
-    0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
+// 和風ゲームクラス
+class Game {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.isRunning = false;
+        this.isPaused = false;
+        this.score = 0;
+        this.lives = 3;
+        
+        this.player = new Player(100, 300);
+        this.enemies = [];
+        this.sakuras = [];
+        this.particles = [];
+        
+        this.backgroundX = 0;
+        this.scrollSpeed = 2;
+        this.enemySpawnTimer = 0;
+        this.sakuraSpawnTimer = 0;
+        
+        this.playerImage = new Image();
+        this.playerImage.src = 'ちびサクヤ（GIF）_02.png';
+        
+        this.setupEventListeners();
+        this.setupUI();
     }
-    100% {
-        transform: translate(var(--vx), var(--vy)) scale(0);
-        opacity: 0;
+    
+    setupEventListeners() {
+        this.keys = {};
+        document.addEventListener('keydown', (e) => {
+            this.keys[e.code] = true;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                this.player.jump();
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            this.keys[e.code] = false;
+        });
+        
+        document.getElementById('startGame').addEventListener('click', () => this.start());
+        document.getElementById('pauseGame').addEventListener('click', () => this.togglePause());
+    }
+    
+    setupUI() {
+        this.scoreElement = document.getElementById('score');
+        this.livesElement = document.getElementById('lives');
+        this.startButton = document.getElementById('startGame');
+        this.pauseButton = document.getElementById('pauseGame');
+    }
+    
+    start() {
+        if (!this.isRunning) {
+            this.isRunning = true;
+            this.isPaused = false;
+            this.reset();
+            this.startButton.style.display = 'none';
+            this.pauseButton.style.display = 'block';
+            this.gameLoop();
+        }
+    }
+    
+    togglePause() {
+        this.isPaused = !this.isPaused;
+        this.pauseButton.textContent = this.isPaused ? '🥷 再開' : '⏸️ 休憩';
+        if (!this.isPaused) this.gameLoop();
+    }
+    
+    reset() {
+        this.score = 0;
+        this.lives = 3;
+        this.player.reset();
+        this.enemies = [];
+        this.sakuras = [];
+        this.particles = [];
+        this.backgroundX = 0;
+        this.enemySpawnTimer = 0;
+        this.sakuraSpawnTimer = 0;
+        this.updateUI();
+    }
+    
+    gameLoop() {
+        if (!this.isRunning || this.isPaused) return;
+        
+        this.update();
+        this.draw();
+        
+        requestAnimationFrame(() => this.gameLoop());
+    }
+    
+    update() {
+        this.player.update(this.keys);
+        
+        this.backgroundX -= this.scrollSpeed;
+        if (this.backgroundX <= -this.canvas.width) this.backgroundX = 0;
+        
+        // 敵のスポーン
+        this.enemySpawnTimer++;
+        if (this.enemySpawnTimer > 150) {
+            this.enemies.push(new Enemy(this.canvas.width, 320));
+            this.enemySpawnTimer = 0;
+        }
+        
+        // 桜のスポーン
+        this.sakuraSpawnTimer++;
+        if (this.sakuraSpawnTimer > 120) {
+            this.sakuras.push(new Sakura(this.canvas.width, 200 + Math.random() * 150));
+            this.sakuraSpawnTimer = 0;
+        }
+        
+        // 敵の更新
+        this.enemies.forEach((enemy, index) => {
+            enemy.update();
+            if (enemy.x < -enemy.width) {
+                this.enemies.splice(index, 1);
+            }
+            if (this.checkCollision(this.player, enemy)) {
+                this.playerHit();
+                this.enemies.splice(index, 1);
+            }
+        });
+        
+        // 桜の更新
+        this.sakuras.forEach((sakura, index) => {
+            sakura.update();
+            if (sakura.x < -sakura.width) {
+                this.sakuras.splice(index, 1);
+            }
+            if (this.checkCollision(this.player, sakura)) {
+                this.collectSakura();
+                this.sakuras.splice(index, 1);
+            }
+        });
+        
+        // パーティクルの更新
+        this.particles.forEach((particle, index) => {
+            particle.update();
+            if (particle.life <= 0) {
+                this.particles.splice(index, 1);
+            }
+        });
+    }
+    
+    draw() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawBackground();
+        this.player.draw(this.ctx);
+        this.enemies.forEach(enemy => enemy.draw(this.ctx));
+        this.sakuras.forEach(sakura => sakura.draw(this.ctx));
+        this.particles.forEach(particle => particle.draw(this.ctx));
+    }
+    
+    drawBackground() {
+        // 和風背景
+        this.ctx.fillStyle = 'rgba(255, 192, 203, 0.3)';
+        for (let i = 0; i < 3; i++) {
+            const x = (this.backgroundX + i * 300) % (this.canvas.width + 100);
+            this.drawMountain(x, 200 + i * 20);
+        }
+        
+        // 地面
+        this.ctx.fillStyle = '#90EE90';
+        this.ctx.fillRect(0, 350, this.canvas.width, 50);
+    }
+    
+    drawMountain(x, y) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, y + 100);
+        this.ctx.lineTo(x + 50, y);
+        this.ctx.lineTo(x + 100, y + 100);
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+    
+    checkCollision(rect1, rect2) {
+        return rect1.x < rect2.x + rect2.width &&
+               rect1.x + rect1.width > rect2.x &&
+               rect1.y < rect2.y + rect2.height &&
+               rect1.y + rect1.height > rect2.y;
+    }
+    
+    playerHit() {
+        this.lives--;
+        this.createHitEffect();
+        if (this.lives <= 0) this.gameOver();
+        this.updateUI();
+    }
+    
+    collectSakura() {
+        this.score += 100;
+        this.createSakuraEffect();
+        this.updateUI();
+    }
+    
+    createHitEffect() {
+        for (let i = 0; i < 8; i++) {
+            this.particles.push(new Particle(
+                this.player.x + this.player.width / 2,
+                this.player.y + this.player.height / 2,
+                '#ff6b6b'
+            ));
+        }
+    }
+    
+    createSakuraEffect() {
+        for (let i = 0; i < 6; i++) {
+            this.particles.push(new Particle(
+                this.player.x + this.player.width / 2,
+                this.player.y + this.player.height / 2,
+                '#FFB6C1'
+            ));
+        }
+    }
+    
+    gameOver() {
+        this.isRunning = false;
+        this.startButton.textContent = '🥷 再挑戦';
+        this.startButton.style.display = 'block';
+        this.pauseButton.style.display = 'none';
+        
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '36px "Noto Sans JP"';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('🌸 修行完了 🌸', this.canvas.width / 2, this.canvas.height / 2 - 30);
+        
+        this.ctx.font = '20px "Noto Sans JP"';
+        this.ctx.fillText(`最終得点: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 20);
+    }
+    
+    updateUI() {
+        this.scoreElement.textContent = this.score;
+        this.livesElement.textContent = this.lives;
     }
 }
 
-@keyframes sparkle-fade {
-    0% {
-        transform: scale(0) rotate(0deg);
-        opacity: 1;
+class Player {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 60;
+        this.height = 60;
+        this.velocityY = 0;
+        this.isGrounded = false;
+        this.groundY = 290;
+        this.jumpPower = -15;
+        this.gravity = 0.8;
+        this.speed = 5;
     }
-    50% {
-        transform: scale(1) rotate(180deg);
-        opacity: 1;
+    
+    update(keys) {
+        if (keys['ArrowLeft'] && this.x > 0) this.x -= this.speed;
+        if (keys['ArrowRight'] && this.x < 740) this.x += this.speed;
+        
+        this.velocityY += this.gravity;
+        this.y += this.velocityY;
+        
+        if (this.y >= this.groundY) {
+            this.y = this.groundY;
+            this.velocityY = 0;
+            this.isGrounded = true;
+        } else {
+            this.isGrounded = false;
+        }
     }
-    100% {
-        transform: scale(0) rotate(360deg);
-        opacity: 0;
+    
+    jump() {
+        if (this.isGrounded) {
+            this.velocityY = this.jumpPower;
+            this.isGrounded = false;
+        }
     }
+    
+    draw(ctx) {
+        if (game.playerImage.complete) {
+            ctx.drawImage(game.playerImage, this.x, this.y, this.width, this.height);
+        } else {
+            ctx.fillStyle = '#FFB6C1';
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+        
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.ellipse(this.x + this.width / 2, 360, this.width / 2, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    reset() {
+        this.x = 100;
+        this.y = this.groundY;
+        this.velocityY = 0;
+        this.isGrounded = true;
+    }
+}
+
+class Enemy {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 35;
+        this.height = 35;
+        this.speed = 3;
+    }
+    
+    update() {
+        this.x -= this.speed;
+    }
+    
+    draw(ctx) {
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        
+        ctx.fillStyle = 'red';
+        ctx.fillRect(this.x + 8, this.y + 8, 6, 6);
+        ctx.fillRect(this.x + 21, this.y + 8, 6, 6);
+    }
+}
+
+class Sakura {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 25;
+        this.height = 25;
+        this.speed = 2;
+        this.rotation = 0;
+    }
+    
+    update() {
+        this.x -= this.speed;
+        this.rotation += 0.1;
+    }
+    
+    draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+        ctx.rotate(this.rotation);
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('🌸', 0, 5);
+        ctx.restore();
+    }
+}
+
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.velocityX = (Math.random() - 0.5) * 8;
+        this.velocityY = (Math.random() - 0.5) * 8;
+        this.life = 25;
+        this.maxLife = 25;
+        this.color = color;
+        this.size = Math.random() * 4 + 2;
+    }
+    
+    update() {
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+        this.velocityY += 0.2;
+        this.life--;
+    }
+    
+    draw(ctx) {
+        const alpha = this.life / this.maxLife;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+let game;
+
+// CSS追加
+const additionalStyles = `
+@keyframes sakura-burst {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--vx), var(--vy)) scale(0); opacity: 0; }
 }
 
 @keyframes modal-fade-in {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes modal-fade-out {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(720deg); }
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.8); }
 }
 
 .ninja-modal .modal-content {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-    backdrop-filter: blur(20px);
+    background: linear-gradient(145deg, #FFF8DC, #F0E68C);
+    border: 6px solid #DAA520;
     border-radius: 20px;
-    padding: 40px;
+    padding: 30px;
     max-width: 500px;
     width: 90%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    color: white;
     text-align: center;
     position: relative;
-    animation: modal-content-slide 0.5s ease-out;
-}
-
-@keyframes modal-content-slide {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
 }
 
 .modal-close {
     position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 30px;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.7);
+    color: #8B4513;
     transition: all 0.3s ease;
 }
 
 .modal-close:hover {
-    color: white;
+    color: #FF1493;
     transform: scale(1.2);
 }
 
-.ninja-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
-    margin: 30px 0;
+.ninja-modal h2 {
+    color: #8B4513;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.stat {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.stat-label {
-    display: block;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 5px;
-}
-
-.stat-value {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #4ecdc4;
-}
-
-.ninja-description-full {
-    font-size: 1rem;
+.ninja-details p {
+    color: #654321;
+    font-size: 1.1rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.9);
-    text-align: left;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    border-radius: 10px;
-    border-left: 4px solid #4ecdc4;
+    font-weight: 500;
 }
 `;
 
